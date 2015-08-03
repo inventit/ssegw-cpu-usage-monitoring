@@ -132,9 +132,9 @@ static void
 upload_cpu_usage_result_proc(Moat in_moat, sse_char *in_urn, sse_char *in_model_name, sse_int in_request_id, sse_int in_result, sse_pointer in_user_data)
 {
   if (in_result == SSE_E_OK) {
-    SSE_LOG_INFO(TAG, "moat_send_notificaion() has been complated.");
+    MOAT_LOG_INFO(TAG, "moat_send_notificaion() has been complated.");
   } else {
-    SSE_LOG_INFO(TAG, "moat_send_notificaion() has failed with [%d].", in_result);
+    MOAT_LOG_INFO(TAG, "moat_send_notificaion() has failed with [%d].", in_result);
   }
 }
 
@@ -147,17 +147,17 @@ upload_cpu_usage(sse_int in_timer_id, sse_pointer in_user_data)
   MoatObject* object = NULL;
   CpuUsage cpu_usage;
   UserContext* ctx = (UserContext*)in_user_data;
-  sse_char urn[512];
+  sse_char* urn;
 
   err = get_cpu_usage(&(ctx->last), &cpu_usage);
   if (err != SSE_E_OK) {
-    SSE_LOG_ERROR(TAG, "get_cpu_usage() has failed with [%d].", err);
+    MOAT_LOG_ERROR(TAG, "get_cpu_usage() has failed with [%d].", err);
     return sse_true;
   }
 
   object = moat_object_new();
   if (object == NULL) {
-    SSE_LOG_ERROR(TAG, "moat_object_new() has failed.");
+    MOAT_LOG_ERROR(TAG, "moat_object_new() has failed.");
     return sse_true;
   }
   moat_object_add_float_value(object, "user", cpu_usage.user, sse_false);
@@ -167,7 +167,7 @@ upload_cpu_usage(sse_int in_timer_id, sse_pointer in_user_data)
   moat_object_add_float_value(object, "iowait", cpu_usage.iowait, sse_false);
   moat_object_add_int64_value(object, "timestamp", moat_get_timestamp_msec(), sse_false);
 
-  snprintf(urn, sizeof(urn) - 1, "urn:moat:%s:upload-cpu-usage:1.0.0", moat_get_package_urn(ctx->moat));
+  urn = moat_create_notification_id_with_moat(ctx->moat, "upload-cpu-usage", "1.0.2");
   request_id = moat_send_notification(ctx->moat,                    /* Moat Instance */
 				      urn,                          /* URN */
 				      NULL,                         /* Key */
@@ -176,9 +176,10 @@ upload_cpu_usage(sse_int in_timer_id, sse_pointer in_user_data)
 				      upload_cpu_usage_result_proc, /* Callback */
 				      ctx);                         /* User data */
   if (request_id < 0) {
-    SSE_LOG_ERROR(TAG, "moat_send_notification() has failed with [%d].", request_id);
+    MOAT_LOG_ERROR(TAG, "moat_send_notification() has failed with [%d].", request_id);
   }
 
+  sse_free(urn);
   moat_object_free(object);
   return sse_true;
 }
@@ -229,7 +230,7 @@ moat_app_main(sse_int in_argc, sse_char *argv[])
   /* main loop */
   err = moat_run(moat);
   if (err != SSE_E_OK) {
-    SSE_LOG_ERROR(TAG, "moat_run() has failed with [%d].", err);
+    MOAT_LOG_ERROR(TAG, "moat_run() has failed with [%d].", err);
   }
 
   /* Teardown */
