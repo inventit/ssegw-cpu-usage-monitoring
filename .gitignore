@@ -16,9 +16,8 @@ package/*.bin
 *.zip
 docs/html/*
 test/*/.app-id
-test/*/logging.conf
 test/*/package.json
-test/*/dominica.so
+test/*/sample-cpu-usage-monitoring.so
 test/*/.moat_cmd_history
 test/*/.moat_ds
 
