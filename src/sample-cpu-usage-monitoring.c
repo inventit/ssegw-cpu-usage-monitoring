@@ -220,7 +220,7 @@ moat_app_main(sse_int in_argc, sse_char *argv[])
     goto error_exit;
   }
   timer_id = moat_timer_set(timer,            /* Timer instance */
-			    3,                /* Interval sec   */
+			    10,               /* Interval sec   */
 			    upload_cpu_usage, /* Callback       */
 			    ctx);             /* User data      */
   if (timer_id < 1) {

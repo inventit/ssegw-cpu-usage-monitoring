@@ -127,9 +127,13 @@ $ make package
 Please deploy the package with ServiceSync WebConsole.
 
 ## Version
-* 1.0.2
+* 1.0.3
  
 ## Change History
+
+#### Changes in `1.0.3` (September 29, 2015)
+
+* Uploding sensing data interval has been changed from 3 sec to 10 sec, because 3 sec interval was too short for some poor environments.
 
 #### Changes in `1.0.2` (August 3, 2015)
 
